@@ -84,11 +84,12 @@ PayPalMobile.prototype.prepareForPayment = function(clientId) {
  * @parameter email: receiver's email address
  * @parameter payerId: a string that uniquely identifies a user within the scope of your system, such as an email address or user ID
  * @parameter payment: PayPalPayment object
+ * @parameter hideCreditCardButton: a boolean indicating whether direct credit card payment should be disabled
  * @parameter completionCallback: a callback function accepting a js object, called when the user has completed payment
  * @parameter cancelCallback: a callback function accepting a reason string, called when the user cancels the payment
  */
-PayPalMobile.prototype.presentPaymentUI = function(clientId, email, payerId, payment, completionCallback, cancelCallback) {
-  cordova.exec(completionCallback, cancelCallback, "PayPalMobile", "presentPaymentUI", [clientId, email, payerId, payment]);
+PayPalMobile.prototype.presentPaymentUI = function(clientId, email, payerId, payment, hideCreditCardButton, completionCallback, cancelCallback) {
+  cordova.exec(completionCallback, cancelCallback, "PayPalMobile", "presentPaymentUI", [clientId, email, payerId, payment, hideCreditCardButton]);
 };
 
 /**
