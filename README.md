@@ -55,6 +55,6 @@ buyButton.onclick = function(e) {
   }
   
   // launch UI, the PayPal UI will be present on screen until user cancels it or payment completed
-  window.plugins.PayPalMobile.presentPaymentUI("YOUR_CLIENT_ID", "YOUR_PAYPAL_EMAIL_ADDRESS", "someuser@somedomain.com", payment, completionCallback, cancelCallback);
+  window.plugins.PayPalMobile.presentPaymentUI("YOUR_CLIENT_ID", "YOUR_PAYPAL_EMAIL_ADDRESS", "someuser@somedomain.com", payment, false, completionCallback, cancelCallback);
 }
 ```
