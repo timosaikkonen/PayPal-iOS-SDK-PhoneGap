@@ -72,8 +72,9 @@
 - (void)presentPaymentUI:(CDVInvokedUrlCommand *)command {
   // check number and type of arguments
   int argumentCount = (signed)[command.arguments count];
-  if (3 >= argumentCount) {
-    [self sendErrorToDelegate:@"presentPaymentUI requires at least four arguments"];
+  if (argumentCount < 4) {
+    [self sendErrorToDelegate:@"presentPaymentUI requires at least the first four arguments of: \
+      clientId, email, payerId, payment, hideCreditCardButton."];
     return;
   }
   
@@ -103,7 +104,7 @@
   
   BOOL hideCreditCardButton = NO;
   
-  if (4 < argumentCount) {
+  if (argumentCount > 4) {
     hideCreditCardButton = [[command.arguments objectAtIndex:4] boolValue];
   }
   
