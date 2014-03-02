@@ -11,7 +11,6 @@
 - (void)prepareForPayment:(CDVInvokedUrlCommand *)command;
 
 - (void)environment:(CDVInvokedUrlCommand *)command;
-- (void)setEnvironment:(CDVInvokedUrlCommand *)command;
 
 - (void)presentPaymentUI:(CDVInvokedUrlCommand *)command;
 - (void)presentFuturePaymentUI:(CDVInvokedUrlCommand *)command;

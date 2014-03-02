@@ -122,20 +122,6 @@ PayPalMobile.prototype.version = function(callback) {
 };
 
 /**
- * Set the environment that the PayPal iOS SDK uses.
- *
- * @parameter environment: string
- * Choices are "PayPalEnvironmentNoNetwork", "PayPalEnvironmentSandbox", or "PayPalEnvironmentProduction"
- */
-PayPalMobile.prototype.setEnvironment = function(environment) {
-  var failureCallback = function(error) {
-    console.log(error);
-  };
-
-  cordova.exec(null, failureCallback, "PayPalMobile", "setEnvironment", [environment]);
-};
-
-/**
  * Retrieve the current PayPal iOS SDK environment: mock, sandbox, or live.
  *
  * @parameter callback: a callback function accepting a string
@@ -154,16 +140,21 @@ PayPalMobile.prototype.environment = function(callback) {
  * UI faster. The preconnect is valid for a limited time, so
  * the recommended time to preconnect is on page load.
  *
- * @parameter productionClientId: your production client id from developer.paypal.com
- * @parameter sandboxClientId: your sandbox client id
+ * @parameter productionClientId: string
+ * Your production client id from developer.paypal.com
+ * @parameter sandboxClientId: string
+ * Your sandbox client id
+ * @parameter environmentToUse: string
+ * Environment to use for payments. 
+ * Choices are "PayPalEnvironmentNoNetwork", "PayPalEnvironmentSandbox", or "PayPalEnvironmentProduction"
  * @parameter callback: a parameter-less success callback function (normally not used)
  */
-PayPalMobile.prototype.prepareForPayment = function(productionClientId, sandboxClientId) {
+PayPalMobile.prototype.prepareForPayment = function(productionClientId, sandboxClientId, environmentToUse) {
   var failureCallback = function(message) {
     console.log("Could not perform prepareForPurchase " + message);
   };
 
-  cordova.exec(null, failureCallback, "PayPalMobile", "prepareForPayment", [productionClientId, sandboxClientId]);
+  cordova.exec(null, failureCallback, "PayPalMobile", "prepareForPayment", [productionClientId, sandboxClientId, environmentToUse]);
 };
 
 

@@ -35,27 +35,6 @@
   [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)setEnvironment:(CDVInvokedUrlCommand *)command {
-  CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  NSString *environment = [command.arguments objectAtIndex:0];
-  
-  NSString *environmentToUse = nil;
-  if ([environment isEqualToString:@"PayPalEnvironmentNoNetwork"]) {
-    environmentToUse = PayPalEnvironmentNoNetwork;
-  } else if ([environment isEqualToString:@"PayPalEnvironmentProduction"]) {
-    environmentToUse = PayPalEnvironmentProduction;
-  } else if ([environment isEqualToString:@"PayPalEnvironmentSandbox"]) {
-    environmentToUse = PayPalEnvironmentSandbox;
-  } else {
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The provided environment is not supported"];
-  }
-  
-  if (environmentToUse) {
-    self.currentEnvironment = environmentToUse;
-  }
-  
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
 - (PayPalConfiguration *)parseConfiguration:(NSDictionary *)configuration {
   PayPalConfiguration *ppconfiguration = [[PayPalConfiguration alloc] init];
   
@@ -105,17 +84,34 @@
   CDVPluginResult *pluginResult = nil;
   NSString *productionClientId = [command.arguments objectAtIndex:0];
   NSString *sandboxClientId = [command.arguments objectAtIndex:1];
+  NSString *environment = [command.arguments objectAtIndex:2];
   
-  if (productionClientId.length > 0 && sandboxClientId.length > 0) {
+  NSString *environmentToUse = nil;
+  if ([environment isEqualToString:@"PayPalEnvironmentNoNetwork"]) {
+    environmentToUse = PayPalEnvironmentNoNetwork;
+  } else if ([environment isEqualToString:@"PayPalEnvironmentProduction"]) {
+    environmentToUse = PayPalEnvironmentProduction;
+  } else if ([environment isEqualToString:@"PayPalEnvironmentSandbox"]) {
+    environmentToUse = PayPalEnvironmentSandbox;
+  }
+  
+  if (!productionClientId) {
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The provided productionClientId was null or empty"];
+  } else if (!sandboxClientId) {
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The provided sandboxClientId was null or empty"];
+  } else if (!environmentToUse) {
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The provided environmentToUse was null or empty"];
+  } else {
+    self.currentEnvironment = environmentToUse;
+    
     [PayPalMobile initializeWithClientIdsForEnvironments:@{PayPalEnvironmentProduction : productionClientId,
                                                            PayPalEnvironmentSandbox : sandboxClientId}];
     
     [PayPalMobile preconnectWithEnvironment:self.currentEnvironment];
     
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  } else {
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The provided clientId was null or empty"];
   }
+  
   
   [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }

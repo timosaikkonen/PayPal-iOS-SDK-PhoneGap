@@ -35,10 +35,7 @@ Sample code
 // See PayPalMobilePGPlugin.js for full API documentation.
 
 // preconnect to PayPal to prepare the device for processing payments.
-window.plugins.PayPalMobile.prepareForPayment("YOUR_PRODUCTION_CLIENT_ID", "YOUR_SANDBOX_CLIENT_ID");
-
-// set envrionment you want to use
-window.plugins.PayPalMobile.setEnvironment("PayPalEnvironmentSandbox");
+window.plugins.PayPalMobile.prepareForPayment("YOUR_PRODUCTION_CLIENT_ID", "YOUR_SANDBOX_CLIENT_ID", "PayPalEnvironmentSandbox");
 
 var buyButton = document.getElementById("buyButton");
 buyButton.onclick = function(e) {
