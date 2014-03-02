@@ -174,12 +174,24 @@ PayPalMobile.prototype.prepareForPayment = function(productionClientId, sandboxC
  *
  * @parameter payment: PayPalPayment object
  * @parameter configuration: PayPalConfiguration object
- * @parameter hideCreditCardButton: a boolean indicating whether direct credit card payment should be disabled
  * @parameter completionCallback: a callback function accepting a js object, called when the user has completed payment
  * @parameter cancelCallback: a callback function accepting a reason string, called when the user cancels the payment
  */
 PayPalMobile.prototype.presentPaymentUI = function(payment, configuration, completionCallback, cancelCallback) {
   cordova.exec(completionCallback, cancelCallback, "PayPalMobile", "presentPaymentUI", [payment, configuration]);
+};
+
+/**
+ * Start PayPal UI to collect future payment from the user.
+ * See https://developer.paypal.com/webapps/developer/docs/integration/mobile/ios-integration-guide/
+ * for more documentation of the parameters.
+ *
+ * @parameter configuration: PayPalConfiguration object
+ * @parameter completionCallback: a callback function accepting a js object, called when the user has completed payment
+ * @parameter cancelCallback: a callback function accepting a reason string, called when the user cancels the payment
+ */
+PayPalMobile.prototype.presentFuturePaymentUI = function(configuration, completionCallback, cancelCallback) {
+  cordova.exec(completionCallback, cancelCallback, "PayPalMobile", "presentFuturePaymentUI", [configuration]);
 };
 
 /**

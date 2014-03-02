@@ -12,6 +12,7 @@
 
 @property(nonatomic, strong, readwrite) CDVInvokedUrlCommand *command;
 @property(nonatomic, strong, readwrite) PayPalPaymentViewController *paymentController;
+@property(nonatomic, strong, readwrite) PayPalFuturePaymentViewController *futurePaymentController;
 @property(nonatomic, strong, readwrite) NSString *currentEnvironment;
 @end
 
@@ -109,6 +110,8 @@
     [PayPalMobile initializeWithClientIdsForEnvironments:@{PayPalEnvironmentProduction : productionClientId,
                                                            PayPalEnvironmentSandbox : sandboxClientId}];
     
+    [PayPalMobile preconnectWithEnvironment:self.currentEnvironment];
+    
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
   } else {
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The provided clientId was null or empty"];
@@ -136,7 +139,7 @@
     [self sendErrorToDelegate:@"payment must be a PayPalConfiguration object"];
     return;
   }
-
+  
   PayPalPaymentIntent intent;
   if ([[payment[@"intent"] lowercaseString] isEqualToString: @"authorize"]) {
     intent = PayPalPaymentIntentAuthorize;
@@ -154,7 +157,7 @@
     [self sendErrorToDelegate:@"payment not processable"];
     return;
   }
-
+  
   PayPalPaymentViewController *controller = [[PayPalPaymentViewController alloc] initWithPayment:pppayment configuration:ppconfiguration delegate:self];
 
   if (!controller) {
@@ -170,7 +173,26 @@
   self.command = command;
   self.paymentController = controller;
   
-  [PayPalMobile preconnectWithEnvironment:self.currentEnvironment];
+  if ([self.viewController respondsToSelector:@selector(presentViewController:animated:completion:)]){
+    [self.viewController presentViewController:controller animated:YES completion:nil];
+  } else {
+    [self.viewController presentModalViewController:controller animated:YES];
+  }
+}
+
+- (void)presentFuturePaymentUI:(CDVInvokedUrlCommand *)command {
+  NSDictionary *configuration = [command.arguments objectAtIndex:0];
+  if (![configuration isKindOfClass:[NSDictionary class]]) {
+    [self sendErrorToDelegate:@"payment must be a PayPalConfiguration object"];
+    return;
+  }
+  
+  PayPalConfiguration *ppconfiguration = [self parseConfiguration:configuration];
+  
+  PayPalFuturePaymentViewController *controller = [[PayPalFuturePaymentViewController alloc] initWithConfiguration:ppconfiguration delegate:self];
+  
+  self.command = command;
+  self.futurePaymentController = controller;
   
   if ([self.viewController respondsToSelector:@selector(presentViewController:animated:completion:)]){
     [self.viewController presentViewController:controller animated:YES completion:nil];
@@ -202,6 +224,23 @@
   
   CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                 messageAsDictionary:completedPayment.confirmation];
+
+  [self.commandDelegate sendPluginResult:pluginResult callbackId:self.command.callbackId];
+}
+
+#pragma mark - PayPalFuturePaymentDelegate implementation
+
+- (void)payPalFuturePaymentDidCancel:(PayPalFuturePaymentViewController *)futurePaymentViewController {
+  [self.viewController dismissViewControllerAnimated:YES completion:nil];
+  [self sendErrorToDelegate:@"payment cancelled"];
+}
+
+- (void)payPalFuturePaymentViewController:(PayPalFuturePaymentViewController *)futurePaymentViewController
+                didAuthorizeFuturePayment:(NSDictionary *)futurePaymentAuthorization {
+  [self.viewController dismissViewControllerAnimated:YES completion:nil];
+
+  CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                messageAsDictionary:futurePaymentAuthorization];
 
   [self.commandDelegate sendPluginResult:pluginResult callbackId:self.command.callbackId];
 }
