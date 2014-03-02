@@ -2,10 +2,22 @@
 //  PayPalMobilePGPlugin.js
 //
 
-function PayPalPayment(amount, currency, shortDescription) {
+/**
+ * @constructor
+ * @parameter amount: string
+ * Payment amount as a string, e.g. "1.99"
+ * @parameter currency: string
+ * Payment currency code e.g. "USD"
+ * @parameter shortDescription: string
+ * Short description of the payment
+ * @parameter intent: string
+ * Intent of request. Valid values: "sale", "authorize"
+ */
+function PayPalPayment(amount, currency, shortDescription, intent) {
   this.amount = amount;
   this.currency = currency;
   this.shortDescription = shortDescription;
+  this.intent = intent;
 }
 
 /**

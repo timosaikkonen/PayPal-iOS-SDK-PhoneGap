@@ -137,10 +137,16 @@
     return;
   }
 
+  PayPalPaymentIntent intent;
+  if ([[payment[@"intent"] lowercaseString] isEqualToString: @"authorize"]) {
+    intent = PayPalPaymentIntentAuthorize;
+  } else {
+    intent = PayPalPaymentIntentSale;
+  }
   PayPalPayment *pppayment = [PayPalPayment paymentWithAmount:[NSDecimalNumber decimalNumberWithString:payment[@"amount"]]
                                                  currencyCode:payment[@"currency"]
                                              shortDescription:payment[@"shortDescription"]
-                                                       intent:PayPalPaymentIntentSale];
+                                                       intent:intent];
 
   PayPalConfiguration *ppconfiguration = [self parseConfiguration:configuration];
 
